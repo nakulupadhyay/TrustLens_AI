@@ -1,349 +1,494 @@
-﻿# TrustLens AI â€” Device Condition Verification Platform
+# TrustLens AI
+### Intelligent Device Condition Analysis & Resale Price Estimation
 
-> AI-powered product damage detection, severity scoring, and price recommendation using **YOLOv8** + **FastAPI** + **React**.
+TrustLens AI is a web-based device inspection platform that uses computer vision and intelligent analysis to evaluate the physical condition of electronic products. Users can upload product images, identify visible damage, understand its severity, and receive an estimated resale price based on the detected condition.
+
+The platform combines a custom-trained YOLOv8 model with a React frontend and FastAPI backend to deliver an integrated device assessment experience.
 
 ---
 
-## âœ¨ Features
+## 📌 Project Overview
 
-| Feature | Description |
+TrustLens AI addresses the challenge of evaluating used electronic devices before resale. Traditional inspections often depend on subjective human judgment, which can lead to inconsistent condition assessments and pricing.
+
+The platform provides an AI-assisted approach by analyzing uploaded images and translating detected damage into understandable condition scores and price recommendations.
+
+**Core workflow:**
+
+1. Upload images of an electronic device.
+2. Detect visible defects using the YOLOv8 model.
+3. Calculate a damage severity score.
+4. Estimate the device's resale value.
+5. Generate an explanation of the assessment.
+6. Save the analysis for future reference.
+
+---
+
+## ✨ Key Capabilities
+
+| Module | Functionality |
 |---|---|
-| ðŸ” **Damage Detection** | YOLOv8 deep learning identifies cracks, scratches, and stains |
-| ðŸ“Š **Severity Scoring** | 0â€“10 score using area-weighted detection analysis |
-| ðŸ’° **Price Recommendation** | 5-tier discount system based on severity |
-| ðŸ“‹ **Report History** | Full scan history per authenticated user |
-| ðŸ” **JWT Authentication** | Secure signup/login with bcrypt password hashing |
-| ðŸ“± **Responsive UI** | Dark professional design â€” mobile, tablet, desktop |
+| Image Analysis | Identifies visible cracks, scratches, and stains. |
+| Defect Localization | Displays detected damage through bounding boxes. |
+| Condition Assessment | Calculates a severity score using damage area and class weights. |
+| Resale Estimation | Applies condition-based discount rules to the original price. |
+| AI Explanation | Provides readable damage descriptions and resale guidance. |
+| User Accounts | Supports registration, login, and protected application routes. |
+| Assessment Dashboard | Allows users to review their previous inspection reports. |
 
 ---
 
-## ðŸ› ï¸ Technologies Used
+## 🧰 Technology Architecture
 
-### Backend
-- **FastAPI** `0.115.0` â€” Python async web framework
-- **SQLAlchemy** `2.0.23` â€” ORM for PostgreSQL/SQLite
-- **psycopg2-binary** â€” PostgreSQL driver
-- **python-jose** â€” JWT token creation & verification
-- **passlib[bcrypt]** â€” Password hashing
-- **ultralytics** `8.3.0` â€” YOLOv8 local inference
-- **Uvicorn** â€” ASGI server
-
-### Frontend
-- **React** `18.2` + **Vite** `5.0` â€” SPA framework
-- **React Router v6** â€” Client-side routing
-- **Tailwind CSS v3** â€” Utility-first CSS
-- **Axios** â€” HTTP client with JWT interceptor
-- **react-hot-toast** â€” Toast notifications
-
-### Database
-- **Supabase PostgreSQL** (production / cloud)
-- **SQLite** (optional local fallback)
+| Component | Technologies |
+|---|---|
+| User Interface | React 18, Vite |
+| Styling | Tailwind CSS |
+| Backend Services | Python, FastAPI |
+| Object Detection | YOLOv8n, Ultralytics |
+| Database Layer | SQLAlchemy |
+| Database | SQLite / PostgreSQL |
+| Authentication | JWT, bcrypt |
+| Image Processing | OpenCV / Python imaging libraries, where configured |
+| Deployment | Vercel, Render |
 
 ---
 
-## ðŸ“ Project Structure
+## 📂 Repository Organization
 
+```text
+TrustLensAI/
+│
+├── backend/
+│   ├── main.py
+│   ├── config.py
+│   ├── database.py
+│   ├── requirements.txt
+│   │
+│   ├── model/
+│   │   └── best_v2.pt
+│   │
+│   ├── models/
+│   │   ├── user.py
+│   │   ├── report.py
+│   │   └── image.py
+│   │
+│   ├── schemas/
+│   │   ├── auth.py
+│   │   └── report.py
+│   │
+│   ├── routes/
+│   │   ├── auth.py
+│   │   ├── upload.py
+│   │   ├── analyze.py
+│   │   └── reports.py
+│   │
+│   ├── services/
+│   │   ├── auth.py
+│   │   ├── yolo.py
+│   │   ├── severity.py
+│   │   ├── pricing.py
+│   │   ├── llm.py
+│   │   └── storage.py
+│   │
+│   └── uploads/
+│
+├── frontend/
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   └── src/
+│       ├── App.jsx
+│       ├── main.jsx
+│       ├── index.css
+│       ├── api/
+│       │   └── axios.js
+│       ├── context/
+│       │   └── AuthContext.jsx
+│       ├── components/
+│       │   ├── Navbar.jsx
+│       │   ├── ProtectedRoute.jsx
+│       │   └── LoadingSpinner.jsx
+│       └── pages/
+│           ├── Landing.jsx
+│           ├── Signup.jsx
+│           ├── Login.jsx
+│           ├── Dashboard.jsx
+│           ├── Upload.jsx
+│           └── AnalysisResult.jsx
+│
+├── ML models/
+│   ├── YOLOv8_Model/
+│   ├── merged_dataset/
+│   ├── merge.py
+│   └── requirements.txt
+│
+├── .gitignore
+└── README.md
 ```
-TrustLens-AI/
-â”œâ”€â”€ backend/
-â”‚   â”œâ”€â”€ .env                    â† Your secrets (never commit!)
-â”‚   â”œâ”€â”€ .env.example            â† Template for env vars
-â”‚   â”œâ”€â”€ main.py                 â† FastAPI app entry point
-â”‚   â”œâ”€â”€ config.py               â† Env variable loading
-â”‚   â”œâ”€â”€ database.py             â† SQLAlchemy engine + session
-â”‚   â”œâ”€â”€ requirements.txt
-â”‚   â”œâ”€â”€ venv/                   â† Python virtual environment
-â”‚   â”œâ”€â”€ yolo_model/             â† Place your .pt weights here
-â”‚   â”œâ”€â”€ uploads/                â† Uploaded images (served as static)
-â”‚   â”œâ”€â”€ models/                 â† SQLAlchemy ORM models
-â”‚   â”‚   â”œâ”€â”€ user.py
-â”‚   â”‚   â”œâ”€â”€ report.py
-â”‚   â”‚   â””â”€â”€ image.py
-â”‚   â”œâ”€â”€ routes/                 â† API route handlers
-â”‚   â”‚   â”œâ”€â”€ auth.py
-â”‚   â”‚   â”œâ”€â”€ upload.py
-â”‚   â”‚   â”œâ”€â”€ analyze.py
-â”‚   â”‚   â””â”€â”€ reports.py
-â”‚   â”œâ”€â”€ schemas/                â† Pydantic request/response schemas
-â”‚   â”‚   â”œâ”€â”€ auth.py
-â”‚   â”‚   â””â”€â”€ report.py
-â”‚   â””â”€â”€ services/               â† Business logic
-â”‚       â”œâ”€â”€ auth.py             â† JWT + bcrypt
-â”‚       â”œâ”€â”€ yolo.py             â† Local YOLO + HF Space inference
-â”‚       â”œâ”€â”€ severity.py         â† Damage severity scoring
-â”‚       â”œâ”€â”€ pricing.py          â† Price recommendation
-â”‚       â”œâ”€â”€ llm.py              â† Explanation generator
-â”‚       â””â”€â”€ storage.py          â† File upload & URL handling
-â”œâ”€â”€ frontend/
-â”‚   â”œâ”€â”€ .env                    â† VITE_API_BASE_URL
-â”‚   â”œâ”€â”€ .env.example
-â”‚   â”œâ”€â”€ index.html
-â”‚   â”œâ”€â”€ vite.config.js
-â”‚   â”œâ”€â”€ tailwind.config.js
-â”‚   â”œâ”€â”€ package.json
-â”‚   â””â”€â”€ src/
-â”‚       â”œâ”€â”€ App.jsx
-â”‚       â”œâ”€â”€ main.jsx
-â”‚       â”œâ”€â”€ index.css
-â”‚       â”œâ”€â”€ api/
-â”‚       â”‚   â””â”€â”€ axios.js
-â”‚       â”œâ”€â”€ context/
-â”‚       â”‚   â””â”€â”€ AuthContext.jsx
-â”‚       â”œâ”€â”€ components/
-â”‚       â”‚   â”œâ”€â”€ Navbar.jsx
-â”‚       â”‚   â”œâ”€â”€ ProtectedRoute.jsx
-â”‚       â”‚   â””â”€â”€ LoadingSpinner.jsx
-â”‚       â””â”€â”€ pages/
-â”‚           â”œâ”€â”€ Landing.jsx
-â”‚           â”œâ”€â”€ Login.jsx
-â”‚           â”œâ”€â”€ Signup.jsx
-â”‚           â”œâ”€â”€ Dashboard.jsx
-â”‚           â”œâ”€â”€ Upload.jsx
-â”‚           â””â”€â”€ AnalysisResult.jsx
-â”œâ”€â”€ start-backend.bat           â† One-click backend start (Windows)
-â”œâ”€â”€ start-frontend.bat          â† One-click frontend start (Windows)
-â”œâ”€â”€ render.yaml                 â† Render.com deployment config
-â”œâ”€â”€ .gitignore
-â””â”€â”€ README.md
-```
 
 ---
 
-## âš™ï¸ Prerequisites
+## ⚙️ Getting Started
 
-| Tool | Version | Purpose |
-|---|---|---|
-| Python | 3.11+ | Backend runtime |
-| Node.js | 18+ | Frontend build |
-| npm | 8+ | Package manager |
-| PostgreSQL | (via Supabase/Neon/etc.) | Database |
+### System Requirements
 
----
+Install the following tools before running the application:
 
-## ðŸš€ Installation & Local Setup
+- Python 3.10 or later
+- Node.js 18 or later
+- npm
+- Git
+- A compatible YOLOv8 model weights file
 
-### Step 1 â€” Clone the Repository
+### 1. Get the Source Code
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/TrustLens-AI.git
-cd TrustLens-AI
+git clone https://github.com/nakulupadhyay/TrustLens_AI.git
+cd TrustLens_AI
 ```
 
-### Step 2 â€” Backend Setup
+### 2. Configure the Backend
+
+Navigate to the backend directory:
 
 ```bash
 cd backend
+```
 
-# Create Python virtual environment
+Create a virtual environment:
+
+```bash
 python -m venv venv
+```
 
-# Activate it (Windows PowerShell)
+Activate it on Windows:
+
+```powershell
 .\venv\Scripts\activate
+```
 
-# Install all dependencies
+For macOS/Linux:
+
+```bash
+source venv/bin/activate
+```
+
+Install the required packages:
+
+```bash
 pip install -r requirements.txt
 ```
 
-### Step 3 â€” Frontend Setup
+If Ultralytics is not included in the requirements file:
 
 ```bash
-cd frontend
-npm install
+pip install ultralytics
 ```
 
----
+### 3. Configure Environment Variables
 
-## ðŸ—„ï¸ Database Setup
-
-### Option A: Supabase (Recommended â€” Free Cloud PostgreSQL)
-
-1. Go to [supabase.com](https://supabase.com) â†’ Create a new project
-2. Navigate to: **Settings â†’ Database â†’ Connection String â†’ URI**
-3. Copy the connection string, e.g.: `postgresql://postgres:PASSWORD@db.xxxxx.supabase.co:5432/postgres`
-
-> âš ï¸ **Important:** If your password contains special characters (`@`, `#`, `$`), URL-encode them:
-> - `@` â†’ `%40`
-> - `#` â†’ `%23`
-> - `$` â†’ `%24`
-
-4. Set `DATABASE_URL` in `backend/.env` (see Environment Variables section)
-
-5. Tables are **auto-created** when you start the backend.
-
-### Option B: Local SQLite (Simple, no server needed)
+Create a `.env` file inside the backend folder.
 
 ```env
 DATABASE_URL=sqlite:///./trustlens.db
-```
 
----
-
-## ðŸ”§ Environment Variables
-
-### Backend â€” `backend/.env`
-
-```env
-# Database
-DATABASE_URL=postgresql://postgres:your%40password@db.project.supabase.co:5432/postgres
-
-# JWT Security (generate with: python -c "import secrets; print(secrets.token_hex(32))")
-SECRET_KEY=your-long-random-secret-key
+SECRET_KEY=replace_with_a_secure_random_key
 ALGORITHM=HS256
+
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 REFRESH_TOKEN_EXPIRE_DAYS=7
 
-# Server URLs
 BACKEND_URL=http://localhost:8000
 FRONTEND_URL=http://localhost:5173
 
-# YOLO Model
-YOLO_MODEL_PATH=yolo_model/best_v2.pt   # path to your .pt weights file
-
-# Optional: HuggingFace Space (overrides local YOLO)
-HF_SPACE_URL=
+OPENAI_API_KEY=
 ```
 
-### Frontend â€” `frontend/.env`
+Use PostgreSQL instead of SQLite by providing the appropriate database connection URL.
+
+Generate a secure JWT secret using:
+
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
+```
+
+### 4. Configure the YOLOv8 Model
+
+The trained model is expected at:
+
+```text
+backend/model/best_v2.pt
+```
+
+Make sure the model path matches the configuration in your backend.
+
+The model is trained to recognize the following categories:
+
+| Class ID | Detection Class |
+|---|---|
+| 0 | Crack |
+| 1 | Good |
+| 2 | Scratch |
+| 3 | Stain |
+
+**Model configuration:**
+
+- Architecture: YOLOv8 Nano
+- Training duration: 50 epochs
+- Image resolution: 640 × 640
+- Batch size: 16
+- Detection categories: 4
+
+If the trained weights are unavailable, the application may use placeholder detections if that fallback is implemented.
+
+### 5. Launch the Backend
+
+From the backend directory, execute:
+
+```bash
+uvicorn main:app --reload --port 8000
+```
+
+The backend will be available at:
+
+http://localhost:8000
+
+Interactive API documentation:
+
+http://localhost:8000/docs
+
+### 6. Launch the Frontend
+
+Open a second terminal:
+
+```bash
+cd frontend
+```
+
+Install frontend dependencies:
+
+```bash
+npm install
+```
+
+Create `frontend/.env`:
 
 ```env
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
----
+Start the development server:
 
-## ðŸ¤– YOLO Model Setup (Optional)
-
-Place your YOLOv8 `.pt` weights file inside:
-```
-backend/yolo_model/best_v2.pt
-```
-
-**If no model is present:** The app automatically uses placeholder/random detections so you can still test the full workflow.
-
-**To download YOLOv8 nano** (lightweight, works on 8GB RAM):
 ```bash
-cd backend
-.\venv\Scripts\activate
-python -c "from ultralytics import YOLO; YOLO('yolov8n.pt'); import shutil; shutil.copy('yolov8n.pt', 'yolo_model/best_v2.pt')"
-```
-
----
-
-## â–¶ï¸ Running the Project Locally
-
-### Start the Backend
-
-**Option A â€” Using the provided script (Windows):**
-```
-Double-click: start-backend.bat
-```
-
-**Option B â€” Manual:**
-```bash
-cd backend
-.\venv\Scripts\activate
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-**Backend URL:** http://localhost:8000  
-**API Documentation:** http://localhost:8000/docs
-
----
-
-### Start the Frontend
-
-**Option A â€” Using the provided script (Windows):**
-```
-Double-click: start-frontend.bat
-```
-
-**Option B â€” Manual:**
-```bash
-cd frontend
 npm run dev
 ```
 
-**Frontend URL:** http://localhost:5173
+Open the application:
+
+http://localhost:5173
 
 ---
 
-## ðŸŒ API Endpoints
+## 🧠 How the AI Analysis Works
 
-| Method | Endpoint | Auth | Description |
+TrustLens AI follows a multi-stage processing workflow.
+
+```text
+       PRODUCT IMAGE
+             |
+             v
+       IMAGE UPLOAD
+             |
+             v
+       YOLOv8 DETECTION
+             |
+             v
+       DAMAGE LOCALIZATION
+             |
+             v
+      SEVERITY CALCULATION
+             |
+             v
+      PRICE ESTIMATION
+             |
+             v
+      EXPLANATION GENERATION
+             |
+             v
+       FINAL ASSESSMENT
+```
+
+### 1. Object Detection
+
+The YOLOv8 model processes the uploaded image and identifies visible defects.
+
+Each detection provides information such as:
+
+- Detected defect category
+- Confidence score
+- Bounding box coordinates
+- Estimated affected image area
+
+### 2. Severity Evaluation
+
+The system calculates a damage score using the detected area and the relative importance of each defect category.
+
+The damage weights are:
+
+| Damage Category | Weight | Interpretation |
+|---|---:|---|
+| Crack | 1.0 | Structural damage |
+| Scratch | 0.6 | Surface damage |
+| Stain | 0.4 | Cosmetic damage |
+| Good | 0 | No detected damage |
+
+The scoring approach considers both the amount of affected area and the type of damage rather than treating every detection equally.
+
+The resulting score is normalized to a scale of 0–10.
+
+### 3. Resale Price Calculation
+
+After determining the severity level, the pricing engine applies a corresponding discount to the device's base price.
+
+| Severity Score | Condition | Discount |
+|---|---|---:|
+| 0 | Good | 0% |
+| 1–2 | Minor | 10% |
+| 3–4 | Moderate | 25% |
+| 5–7 | Severe | 40% |
+| 8–10 | Critical | 55% |
+
+The recommended price is calculated as:
+
+\[
+P_r = P_o \times \left(1-\frac{D}{100}\right)
+\]
+
+Where:
+
+- \(P_r\) = Recommended resale price
+- \(P_o\) = Original device price
+- \(D\) = Applicable discount percentage
+
+**Example:**
+
+For a device with an original price of ₹20,000 and a moderate damage classification:
+
+\[
+P_r = 20000 \times (1-0.25)
+\]
+
+\[
+P_r = ₹15,000
+\]
+
+The final price is an estimate based on the application's configured pricing rules, not a guaranteed market valuation.
+
+---
+
+## 🔌 Backend API Reference
+
+The backend exposes REST endpoints for authentication, image processing, and report management.
+
+| HTTP Method | Endpoint | Access | Purpose |
 |---|---|---|---|
-| `POST` | `/auth/signup` | Public | Register a new account |
-| `POST` | `/auth/login` | Public | Login, returns JWT tokens |
-| `GET` | `/auth/me` | Bearer | Get current user profile |
-| `POST` | `/upload` | Bearer | Upload 1â€“5 device images |
-| `POST` | `/analyze` | Bearer | Run AI damage analysis |
-| `GET` | `/reports` | Bearer | List all user reports |
-| `GET` | `/report/{id}` | Bearer | Get a specific report |
-| `GET` | `/health` | Public | Health check |
+| POST | `/auth/signup` | Public | Create an account |
+| POST | `/auth/login` | Public | Authenticate a user |
+| POST | `/auth/logout` | Application-dependent | Handle logout |
+| GET | `/auth/me` | Protected | Retrieve user details |
+| POST | `/upload` | Protected | Upload product images |
+| POST | `/analyze` | Protected | Execute damage analysis |
+| GET | `/reports` | Protected | Retrieve saved reports |
+| GET | `/report/{id}` | Protected | View individual report details |
+
+For request parameters and response schemas, refer to the Swagger documentation at `/docs`.
 
 ---
 
-## ðŸ“¦ Deployment
+## 🌍 Live Application
 
-### Backend â€” Render.com
+The deployed application can be accessed through the following links:
 
-1. Create a **Web Service** on [render.com](https://render.com)
-2. Set **Root Directory** to `backend`
-3. **Build Command:** `pip install -r requirements.txt`
-4. **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. Set environment variables in Render Dashboard:
-   - `DATABASE_URL` â†’ Your Supabase/Neon URL
-   - `SECRET_KEY` â†’ A long random secret
-   - `FRONTEND_URL` â†’ Your Vercel frontend URL
-   - `BACKEND_URL` â†’ This service's Render URL
-
-A `render.yaml` is already configured in the project root.
-
-### Frontend â€” Vercel
-
-1. Push the repo to GitHub
-2. Import on [vercel.com](https://vercel.com)
-3. Set **Root Directory** to `frontend`
-4. Add environment variable:
-   - `VITE_API_BASE_URL` â†’ Your Render backend URL
-
-A `frontend/vercel.json` is already configured for SPA routing.
+| Service | Link |
+|---|---|
+| Web Application | [TrustLens AI – Frontend](https://trustlens-ai-xi.vercel.app/) |
+| Backend Service | [FastAPI Backend](https://trustlens-ai-cqk8.onrender.com) |
+| API Documentation | [Local Swagger Docs](http://localhost:8000/docs) |
 
 ---
 
-## ðŸ”’ Security Notes
+## 🚀 Deployment Guide
 
-- `.env` files are in `.gitignore` â€” never committed to Git
-- Passwords are hashed with bcrypt (never stored in plain text)
-- JWT tokens expire after 30 minutes (configurable)
-- SQL injection prevented by SQLAlchemy ORM parameterized queries
-- CORS configured to only allow your frontend origin
-- Never hardcode credentials in source code
+### Backend Deployment – Render
 
----
+1. Create a Web Service on [Render](https://render.com/).
+2. Connect the GitHub repository.
+3. Set the root directory to `backend`.
+4. Configure the build command:
 
-## ðŸ—ï¸ Database Schema
-
-```
-users          reports              images
-â”€â”€â”€â”€â”€â”€â”€â”€â”€      â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-id (PK)        id (PK)              id (PK)
-name           user_id â†’ users.id   report_id â†’ reports.id
-email          base_price           url
-password_hash  severity
-role           recommended_price
-created_at     explanation
-               image_urls (JSON)
-               detections (JSON)
-               created_at
+```bash
+pip install -r requirements.txt
 ```
 
+5. Configure the start command:
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+6. Add the required environment variables through the Render dashboard.
+
+### Frontend Deployment – Vercel
+
+1. Import the GitHub repository into [Vercel](https://vercel.com/).
+2. Select `frontend` as the root directory.
+3. Set the environment variable:
+
+```env
+VITE_API_BASE_URL=your_deployed_backend_url
+```
+
+4. Build and deploy the application.
+
 ---
 
-## ðŸ“„ License
+## 🔐 Security & Data Handling
 
-This project is for educational and personal use. Original concept by Team 20 â€” customized and extended independently.
+The application includes several security-related mechanisms:
+
+- Password hashing using bcrypt.
+- JWT-based authentication.
+- Protected API routes.
+- Environment-based configuration.
+- Database access through SQLAlchemy.
+- Configurable CORS origins.
+- Separation of frontend and backend configuration.
+
+**Security recommendation:** Never upload `.env` files, database credentials, private API keys, or authentication secrets to a public GitHub repository.
 
 ---
 
-*Built with FastAPI Â· React Â· YOLOv8 Â· Supabase PostgreSQL Â· Tailwind CSS*
+## 🔮 Future Enhancements
 
+Potential improvements to the platform include:
+
+- Support for additional electronic device categories.
+- More detailed damage classification.
+- Improved price estimation using market data.
+- Cloud-based image storage.
+- Advanced model evaluation and monitoring.
+- Downloadable inspection reports.
+- Improved performance for large image uploads.
+
+---
+
+## 📜 License & Attribution
+
+This repository should retain the applicable license and attribution notices for any third-party code, datasets, model weights, or components used in the project.
+
+The project documentation describes the implementation and features of TrustLens AI. Refer to the original licenses of its dependencies and training datasets for usage conditions.
+
+---
+
+**TrustLens AI | Computer Vision · Device Inspection · Intelligent Pricing**
