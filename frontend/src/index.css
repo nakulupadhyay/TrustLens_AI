@@ -22,6 +22,90 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* ── Dark-mode native form elements ──────────────────────────────────── */
+
+  /*
+   * Force all <select>, <input>, <textarea> onto the dark colour scheme so
+   * the browser renders the native chrome (calendar icon, spinner arrows,
+   * dropdown list) in a light-on-dark style rather than black-on-white.
+   */
+  select,
+  input,
+  textarea {
+    color-scheme: dark;
+  }
+
+  /*
+   * <select> base — the closed element
+   * Tailwind utility classes on the element itself handle bg/border/text,
+   * but we need this fallback for browsers that ignore class overrides on
+   * replaced elements (older WebKit / Firefox).
+   */
+  select {
+    background-color: #0f1623;
+    color: #e2e8f0;
+    border-color: #1e2d3d;
+  }
+
+  /*
+   * <option> elements — these live inside the native OS popup and are
+   * completely immune to Tailwind utility classes in most browsers.
+   * Setting background + color here is the ONLY reliable way to style them.
+   */
+  option {
+    background-color: #111827;  /* surface-100 — dark, readable */
+    color: #e2e8f0;             /* near-white text */
+  }
+
+  option:hover,
+  option:focus,
+  option:checked {
+    background-color: #1e3a8a;  /* brand-900 — highlighted row */
+    color: #ffffff;
+  }
+
+  /*
+   * Number input — hide the default light spinner arrows in WebKit and
+   * replace with neutral styling; Firefox spinner is controlled by color-scheme.
+   */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    opacity: 0.4;
+    filter: invert(1);           /* turn dark arrows light */
+  }
+
+  /*
+   * Date / datetime-local — the calendar icon and date text are rendered by
+   * the browser. color-scheme:dark on the input (set above) is the main fix;
+   * additionally ensure the placeholder text color is readable.
+   */
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='datetime-local']::-webkit-calendar-picker-indicator {
+    filter: invert(0.7) brightness(1.4);  /* make dark icon visible on dark bg */
+    cursor: pointer;
+    opacity: 0.75;
+  }
+  input[type='date']::-webkit-calendar-picker-indicator:hover,
+  input[type='datetime-local']::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+
+  /* Firefox date/time text colour */
+  input[type='date'],
+  input[type='datetime-local'] {
+    color: #e2e8f0;
+  }
+
+  /* Placeholder colour for all inputs */
+  ::placeholder {
+    color: #64748b;    /* surface-500 — readable but clearly subordinate */
+    opacity: 1;        /* Firefox reduces opacity by default */
+  }
+  ::-webkit-input-placeholder { color: #64748b; }
+  ::-moz-placeholder          { color: #64748b; opacity: 1; }
+  :-ms-input-placeholder       { color: #64748b; }
+  /* ──────────────────────────────────────────────────────────────────────── */
+
   /* Custom scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: #0d1420; }
@@ -82,6 +166,18 @@
       placeholder-slate-600
       focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50
       transition-all duration-200 text-sm;
+  }
+
+  /*
+   * Reusable dark form field — applies to all inputs / selects on the
+   * Phone Details step (and anywhere else) so we have one source of truth.
+   */
+  .form-field {
+    @apply w-full rounded-lg px-3 py-2.5 text-sm text-white
+      bg-surface-800 border border-surface-600
+      focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue
+      transition-colors duration-150;
+    color-scheme: dark;
   }
 
   /* Cards */
