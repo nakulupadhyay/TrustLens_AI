@@ -226,7 +226,7 @@ export default function Upload() {
                   <select
                     value={brand}
                     onChange={e => setBrand(e.target.value)}
-                    className="w-full bg-surface-800 border border-surface-600 text-white rounded-lg px-3 py-2.5 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                    className="form-field"
                   >
                     <option value="">Select brand…</option>
                     {BRANDS.map(b => <option key={b} value={b}>{b}</option>)}
@@ -237,7 +237,7 @@ export default function Upload() {
                       placeholder="Enter brand name"
                       value={customBrand}
                       onChange={e => setCustomBrand(e.target.value)}
-                      className="mt-2 w-full bg-surface-800 border border-surface-600 text-white rounded-lg px-3 py-2.5 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                      className="mt-2 form-field"
                     />
                   )}
                 </div>
@@ -250,7 +250,7 @@ export default function Upload() {
                     placeholder="e.g. iPhone 14 Pro, Galaxy S23"
                     value={modelName}
                     onChange={e => setModelName(e.target.value)}
-                    className="w-full bg-surface-800 border border-surface-600 text-white rounded-lg px-3 py-2.5 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                    className="form-field"
                   />
                 </div>
 
@@ -260,7 +260,7 @@ export default function Upload() {
                   <select
                     value={storageCapacity}
                     onChange={e => setStorageCapacity(e.target.value)}
-                    className="w-full bg-surface-800 border border-surface-600 text-white rounded-lg px-3 py-2.5 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                    className="form-field"
                   >
                     <option value="">Select storage…</option>
                     {STORAGES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -280,7 +280,7 @@ export default function Upload() {
                       value={basePrice}
                       onChange={e => setBasePrice(e.target.value)}
                       min="1"
-                      className="w-full bg-surface-800 border border-surface-600 text-white rounded-lg pl-8 pr-3 py-2.5 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                      className="form-field pl-8"
                     />
                   </div>
                 </div>
@@ -293,7 +293,7 @@ export default function Upload() {
                     value={purchaseDate}
                     onChange={e => setPurchaseDate(e.target.value)}
                     max={new Date().toISOString().split('T')[0]}
-                    className="w-full bg-surface-800 border border-surface-600 text-white rounded-lg px-3 py-2.5 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue [color-scheme:dark]"
+                    className="form-field"
                   />
                   <p className="text-surface-500 text-xs mt-1">Used to calculate age-based depreciation</p>
                 </div>
