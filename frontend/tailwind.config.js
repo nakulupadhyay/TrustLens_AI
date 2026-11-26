@@ -20,15 +20,23 @@ export default {
                     800: '#1e40af',
                     900: '#1e3a8a',
                     950: '#172554',
+                    // Semantic aliases used as bg-brand-dark, text-brand-blue etc.
+                    dark: '#080c14',
+                    blue: '#2563eb',
+                    cyan: '#06b6d4',
                 },
                 surface: {
                     DEFAULT: '#080c14',
-                    50:  '#0d1420',
-                    100: '#111827',
-                    200: '#1a2234',
-                    300: '#1e2d3d',
-                    400: '#243447',
-                    500: '#2d3f54',
+                    50:  '#0d1420',   // lightest elevated surface
+                    100: '#111827',   // card background
+                    200: '#1a2234',   // slightly elevated
+                    300: '#c8d6e8',   // readable text — labels, secondary headings
+                    400: '#94a3b8',   // muted text — sublabels
+                    500: '#64748b',   // faintest readable text — captions
+                    600: '#1e2d3d',   // border colour, subtle dividers
+                    700: '#151f2e',   // darker surface / step connectors
+                    800: '#0f1623',   // dark input / field background
+                    900: '#080c14',   // page background
                 },
                 // Accent cyan
                 accent: {
